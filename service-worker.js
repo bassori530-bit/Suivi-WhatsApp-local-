@@ -1,4 +1,4 @@
-const CACHE_NAME = "suivi-whatsapp-v1";
+const CACHE_NAME = "suivi-whatsapp-v4";
 const APP_SHELL = ["./", "./index.html", "./manifest.json"];
 
 self.addEventListener("install", (event) => {
