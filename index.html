@@ -23,6 +23,7 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
 const {
@@ -90,7 +91,14 @@ const IconTrash = p => /*#__PURE__*/React.createElement(Icon, p, "🗑");
 const IconPencil = p => /*#__PURE__*/React.createElement(Icon, p, "✎");
 const IconMessage = p => /*#__PURE__*/React.createElement(Icon, p, "💬");
 const IconClip = p => /*#__PURE__*/React.createElement(Icon, p, "📋");
+function extractPhoneNumbers(text) {
+  const re = /(\+33[\s.-]?[1-9](?:[\s.-]?\d{2}){4})|(0[1-9](?:[\s.-]?\d{2}){4})/g;
+  const matches = text.match(re) || [];
+  const cleaned = matches.map(m => m.replace(/[\s.-]/g, ""));
+  return [...new Set(cleaned)];
+}
 const IconExport = p => /*#__PURE__*/React.createElement(Icon, p, "📤");
+const IconCamera = p => /*#__PURE__*/React.createElement(Icon, p, "📷");
 
 /* ---------- helpers ---------- */
 function uid() {
@@ -124,6 +132,9 @@ function waLink(phone, text) {
 function fillTemplate(template, client) {
   const firstName = (client.name || "").split(" ")[0];
   return (template || "").replaceAll("{nom}", client.name || "").replaceAll("{prenom}", firstName);
+}
+function splitPhones(phone) {
+  return (phone || "").split(",").map(p => p.trim()).filter(Boolean);
 }
 function pulseColor(daysSince) {
   if (daysSince >= 5) return "#E76F51";
@@ -210,6 +221,8 @@ function App() {
   const [exportOpen, setExportOpen] = useState(false);
   const [template, setTemplateState] = useState(() => loadTemplate());
   const [templateOpen, setTemplateOpen] = useState(false);
+  const [quickSendOpen, setQuickSendOpen] = useState(false);
+  const [photoImportOpen, setPhotoImportOpen] = useState(false);
   function setTemplate(text) {
     setTemplateState(text);
     saveTemplate(text);
@@ -399,7 +412,44 @@ function App() {
     }
   }, /*#__PURE__*/React.createElement(IconPencil, {
     size: 13
-  }), " Modèle de message")), importMsg && /*#__PURE__*/React.createElement("div", {
+  }), " Modèle de message"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setQuickSendOpen(true),
+    style: {
+      marginTop: 12,
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 6,
+      background: "#25D36622",
+      border: "1px solid #25D36655",
+      color: "#7FA98C",
+      borderRadius: 8,
+      padding: "7px 12px",
+      fontSize: 12.5,
+      cursor: "pointer",
+      fontFamily: "\'Inter\', sans-serif",
+      fontWeight: 600
+    }
+  }, /*#__PURE__*/React.createElement(IconMessage, {
+    size: 13
+  }), " Envoi rapide"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setPhotoImportOpen(true),
+    style: {
+      marginTop: 12,
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 6,
+      background: "transparent",
+      border: "1px solid #2C3A50",
+      color: "#8B95A3",
+      borderRadius: 8,
+      padding: "7px 12px",
+      fontSize: 12.5,
+      cursor: "pointer",
+      fontFamily: "\'Inter\', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement(IconCamera, {
+    size: 13
+  }), " Depuis une photo")), importMsg && /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 8,
       fontSize: 12.5,
@@ -527,7 +577,7 @@ function App() {
       color: "#7C879A",
       marginTop: 2
     }
-  }, c.phone))), /*#__PURE__*/React.createElement("span", {
+  }, splitPhones(c.phone).join(" · ")))), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 11,
       fontWeight: 500,
@@ -558,8 +608,9 @@ function App() {
       marginTop: 12,
       flexWrap: "wrap"
     }
-  }, c.phone && /*#__PURE__*/React.createElement("a", {
-    href: waLink(c.phone, fillTemplate(template, c)),
+  }, splitPhones(c.phone).map((num, i) => /*#__PURE__*/React.createElement("a", {
+    key: i,
+    href: waLink(num, fillTemplate(template, c)),
     target: "_blank",
     rel: "noopener noreferrer",
     style: {
@@ -578,7 +629,7 @@ function App() {
     }
   }, /*#__PURE__*/React.createElement(IconMessage, {
     size: 13
-  }), " Contacter"), c.status !== "converti" && c.status !== "perdu" && /*#__PURE__*/React.createElement("button", {
+  }), " ", splitPhones(c.phone).length > 1 ? num.slice(-4) : "Contacter")), c.status !== "converti" && c.status !== "perdu" && /*#__PURE__*/React.createElement("button", {
     onClick: () => markRelance(c),
     style: {
       display: "flex",
@@ -679,6 +730,12 @@ function App() {
     template: template,
     setTemplate: setTemplate,
     onClose: () => setTemplateOpen(false)
+  }), quickSendOpen && /*#__PURE__*/React.createElement(QuickSendModal, {
+    template: template,
+    onClose: () => setQuickSendOpen(false)
+  }), photoImportOpen && /*#__PURE__*/React.createElement(PhotoImportModal, {
+    onAdd: mergeImportedRows,
+    onClose: () => setPhotoImportOpen(false)
   }));
 }
 function ClientForm({
@@ -785,11 +842,11 @@ function ClientForm({
     autoFocus: true
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: labelStyle
-  }, "Téléphone WhatsApp"), /*#__PURE__*/React.createElement("input", {
+  }, "Téléphone(s) WhatsApp"), /*#__PURE__*/React.createElement("input", {
     style: inputStyle,
     value: phone,
     onChange: e => setPhone(e.target.value),
-    placeholder: "06 12 34 56 78"
+    placeholder: "06 12 34 56 78, 07 11 22 33 44"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: labelStyle
   }, "Note (dernier échange)"), /*#__PURE__*/React.createElement("textarea", {
@@ -1217,6 +1274,394 @@ function TemplateModal({
       fontFamily: "\'Inter\', sans-serif"
     }
   }, "Enregistrer le modèle")));
+}
+function QuickSendModal({
+  template,
+  onClose
+}) {
+  const [phone, setPhone] = useState("");
+  const [msg, setMsg] = useState(template);
+  const canSend = phone.trim().length >= 6;
+  const inputStyle = {
+    width: "100%",
+    background: "#1A2332",
+    border: "1px solid #2C3A50",
+    borderRadius: 8,
+    color: "#EEE8DC",
+    padding: "10px 12px",
+    fontSize: 14,
+    fontFamily: "\'Inter\', sans-serif",
+    outline: "none",
+    boxSizing: "border-box"
+  };
+  const labelStyle = {
+    fontSize: 12,
+    color: "#7C879A",
+    marginBottom: 5,
+    display: "block",
+    fontWeight: 500
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(10,14,20,0.7)",
+      display: "flex",
+      alignItems: "flex-end",
+      zIndex: 50
+    },
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.stopPropagation(),
+    style: {
+      background: "#1F2937",
+      width: "100%",
+      borderRadius: "18px 18px 0 0",
+      padding: "20px 20px 28px",
+      maxHeight: "88vh",
+      overflowY: "auto",
+      fontFamily: "\'Inter\', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "\'Fraunces\', serif",
+      fontSize: 19,
+      fontWeight: 600,
+      color: "#EEE8DC"
+    }
+  }, "Envoi rapide"), /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      background: "transparent",
+      border: "none",
+      color: "#7C879A",
+      cursor: "pointer"
+    }
+  }, /*#__PURE__*/React.createElement(IconX, {
+    size: 20
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#8B95A3",
+      lineHeight: 1.5,
+      marginBottom: 14
+    }
+  }, "Juste un numéro, pas besoin de nom ni de date — pratique pour un contact ponctuel."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: labelStyle
+  }, "Numéro WhatsApp"), /*#__PURE__*/React.createElement("input", {
+    style: inputStyle,
+    value: phone,
+    onChange: e => setPhone(e.target.value),
+    placeholder: "06 12 34 56 78",
+    autoFocus: true
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: labelStyle
+  }, "Message"), /*#__PURE__*/React.createElement("textarea", {
+    style: {
+      ...inputStyle,
+      minHeight: 90,
+      resize: "vertical"
+    },
+    value: msg,
+    onChange: e => setMsg(e.target.value)
+  })), /*#__PURE__*/React.createElement("a", {
+    href: canSend ? waLink(phone, msg) : undefined,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    onClick: e => {
+      if (!canSend) e.preventDefault();else onClose();
+    },
+    style: {
+      marginTop: 14,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      width: "100%",
+      background: canSend ? "#25D366" : "#3A4152",
+      color: canSend ? "#0C2119" : "#7C879A",
+      border: "none",
+      borderRadius: 10,
+      padding: "13px",
+      fontSize: 15,
+      fontWeight: 600,
+      cursor: canSend ? "pointer" : "not-allowed",
+      fontFamily: "\'Inter\', sans-serif",
+      textDecoration: "none",
+      boxSizing: "border-box"
+    }
+  }, /*#__PURE__*/React.createElement(IconMessage, {
+    size: 15
+  }), " Ouvrir dans WhatsApp")));
+}
+function PhotoImportModal({
+  onAdd,
+  onClose
+}) {
+  const [status, setStatus] = useState("idle"); // idle | processing | done | error
+  const [progress, setProgress] = useState(0);
+  const [detected, setDetected] = useState([]); // [{ phone, checked, name }]
+  const [error, setError] = useState("");
+  async function handleFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    setStatus("processing");
+    setProgress(0);
+    setError("");
+    try {
+      if (!window.Tesseract) {
+        setError("La reconnaissance de texte n'a pas pu se charger. Vérifie ta connexion et réessaie.");
+        setStatus("error");
+        return;
+      }
+      const result = await window.Tesseract.recognize(file, "fra", {
+        logger: m => {
+          if (m.status === "recognizing text") setProgress(Math.round((m.progress || 0) * 100));
+        }
+      });
+      const numbers = extractPhoneNumbers(result.data.text || "");
+      if (numbers.length === 0) {
+        setError("Aucun numéro reconnu sur cette photo. Essaie une image plus nette ou plus zoomée.");
+        setStatus("error");
+        return;
+      }
+      setDetected(numbers.map((phone, i) => ({
+        phone,
+        checked: true,
+        name: `Contact ${i + 1}`
+      })));
+      setStatus("done");
+    } catch (err) {
+      setError("Erreur pendant la lecture de l'image. Réessaie avec une autre photo.");
+      setStatus("error");
+    }
+    e.target.value = "";
+  }
+  function toggle(i) {
+    setDetected(detected.map((d, idx) => idx === i ? {
+      ...d,
+      checked: !d.checked
+    } : d));
+  }
+  function updateName(i, name) {
+    setDetected(detected.map((d, idx) => idx === i ? {
+      ...d,
+      name
+    } : d));
+  }
+  function handleAdd() {
+    const rows = detected.filter(d => d.checked).map(d => ({
+      Nom: d.name,
+      "Téléphone": d.phone
+    }));
+    onAdd(rows);
+    onClose();
+  }
+  const inputStyle = {
+    width: "100%",
+    background: "#1A2332",
+    border: "1px solid #2C3A50",
+    borderRadius: 8,
+    color: "#EEE8DC",
+    padding: "8px 10px",
+    fontSize: 13,
+    fontFamily: "\'Inter\', sans-serif",
+    outline: "none",
+    boxSizing: "border-box"
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(10,14,20,0.7)",
+      display: "flex",
+      alignItems: "flex-end",
+      zIndex: 50
+    },
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    onClick: e => e.stopPropagation(),
+    style: {
+      background: "#1F2937",
+      width: "100%",
+      borderRadius: "18px 18px 0 0",
+      padding: "20px 20px 28px",
+      maxHeight: "88vh",
+      overflowY: "auto",
+      fontFamily: "\'Inter\', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "\'Fraunces\', serif",
+      fontSize: 19,
+      fontWeight: 600,
+      color: "#EEE8DC"
+    }
+  }, "Depuis une photo"), /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      background: "transparent",
+      border: "none",
+      color: "#7C879A",
+      cursor: "pointer"
+    }
+  }, /*#__PURE__*/React.createElement(IconX, {
+    size: 20
+  }))), status === "idle" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#8B95A3",
+      lineHeight: 1.5,
+      marginBottom: 14
+    }
+  }, "Choisis une capture d'écran contenant des numéros de téléphone (liste de contacts, conversation, tableau...). L'app les repère automatiquement, sans envoyer la photo sur internet."), /*#__PURE__*/React.createElement("input", {
+    id: "photo-import-input",
+    type: "file",
+    accept: "image/*",
+    style: {
+      display: "none"
+    },
+    onChange: handleFile
+  }), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "photo-import-input",
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      background: "#1A2332",
+      border: "1px dashed #3A4763",
+      color: "#8B95A3",
+      borderRadius: 8,
+      padding: "18px 12px",
+      fontSize: 13,
+      cursor: "pointer",
+      fontFamily: "\'Inter\', sans-serif"
+    }
+  }, /*#__PURE__*/React.createElement(IconCamera, {
+    size: 15
+  }), " Choisir une photo")), status === "processing" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      padding: "24px 0",
+      color: "#8B95A3"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 10
+    }
+  }, "Lecture de la photo... ", progress, "%"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 6,
+      background: "#1A2332",
+      borderRadius: 3,
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: "100%",
+      width: `${progress}%`,
+      background: "#E76F51",
+      transition: "width 0.2s"
+    }
+  }))), status === "error" && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#E76F51",
+      marginBottom: 14
+    }
+  }, error), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setStatus("idle"),
+    style: {
+      width: "100%",
+      background: "#3A4152",
+      color: "#fff",
+      border: "none",
+      borderRadius: 10,
+      padding: "12px",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontFamily: "\'Inter\', sans-serif"
+    }
+  }, "Réessayer")), status === "done" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#8B95A3",
+      marginBottom: 12
+    }
+  }, detected.length, " numéro", detected.length > 1 ? "s" : "", " détecté", detected.length > 1 ? "s" : "", ". Décoche ceux à ignorer, et modifie les noms si besoin."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 8,
+      marginBottom: 14
+    }
+  }, detected.map((d, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      background: "#1A2332",
+      borderRadius: 8,
+      padding: "8px 10px"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: d.checked,
+    onChange: () => toggle(i),
+    style: {
+      flexShrink: 0
+    }
+  }), /*#__PURE__*/React.createElement("input", {
+    style: {
+      ...inputStyle,
+      flex: 1
+    },
+    value: d.name,
+    onChange: e => updateName(i, e.target.value)
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "\'JetBrains Mono\', monospace",
+      fontSize: 12,
+      color: "#7C879A",
+      whiteSpace: "nowrap"
+    }
+  }, d.phone)))), /*#__PURE__*/React.createElement("button", {
+    onClick: handleAdd,
+    disabled: !detected.some(d => d.checked),
+    style: {
+      width: "100%",
+      background: detected.some(d => d.checked) ? "#E76F51" : "#3A4152",
+      color: "#fff",
+      border: "none",
+      borderRadius: 10,
+      padding: "13px",
+      fontSize: 15,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontFamily: "\'Inter\', sans-serif"
+    }
+  }, "Ajouter ces clients"))));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
 </script>
