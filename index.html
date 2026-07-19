@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Suivi WhatsApp</title>
+<meta name="theme-color" content="#1A2332" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFfklEQVR4nO3cPXIbRxRF4QeUqrQHJgqYMqJDbUGxdqJAK1CgnTD2FhSakVIGTrgHRXRgjQ2C+Ome6e7X793zxSxyCrhnGgBZ3Nlkbm7vX7yvAf08Pz3uvK/hkOvFMHaY+UYx/AczelwyOoZhP4zho8aoELr/EIaPLXqH0O2bM3y01CuE5t+U4aOn1iHsW34zxo/eWm+sSU0MHx5anAabTwDGDy8ttrcpAMYPb1s3uDoAxo9ZbNniqgAYP2azdpPVATB+zGrNNqsCYPyYXe1GiwNg/IiiZqtFATB+RFO62asBMH5EVbLdpn8KAURzMQDu/oju2obP/i0F48exvz59uPo1f/z594ArqXfu74bejb4QxFIy+nNfP2sMh05Wwd1fW+3oS8wQw6lTgDfBeKXH+Ht+363eFMHdX9PIgXqeBsenACcAht+dZzoNXgXA3V+P1xi9fu7xxjkBhHnfib1/vtlBANz9tcwwPjOf6zjcOieAoFnGv/C8HgKAtL0ZL3+UzHb3X4y+rmXznACQRgBCZr37LzyujwAgjQBEzH73X4y+zj1vgKHq5vb+hRMA0ghAQJSXP4uR10sAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAAmb4r2w1Rl4vAUCa9D/H/fnjwfsShvn17Yv3JUxpp/Tn0EqDPyVCBKNfrkmcAOrDx3mpTwCG/9bMp4DHm/WUJwDDR6l0nwIx/svef/3ufQkneX1UmyoAxo9aaQJg/OVmOwU8f1GXIgDGX2+WCLx/Sx0+AMa/nncE3uM3Cx4A49/OK4IZxm8WOADG387oCGYZv1nS3wOg3hJBz1+UzTT8RcgTgLt/P71OgxnHb8YJgBMOI9hyIsw6+kPh/haIu7+fkhjef/1udx8/D7iaNjgBUMz7Y9MeQr0H4O4fQ6TnKVQAQGsEAGkEAGlhAoj0uhJxnq8wAQA9EACkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkhQng7uNn70tAhSjPV5gAgB4IANIIANJCBRDldaW6SM9TqACA1sIFEOnuoija8xMuAKClkAFEu8uoiPi8hAwAaCVsABHvNplFfT7CBmAW90HPJvLzEDoAs9gPfgbRH//wAZjFfxKiyvC4pwjALMeTEUmWxztNAGZ5npTZZXqcUwVgluvJmVG2x3d3c3v/4n0Rvfz88eB9CWlkG/4idQALQlgv6/AXEgEsCKFc9uEvpAI4RhD/Uxn8MekAFi1CUB1QdOk+BfLA+OMigI0Yf2wEAGkEsAF3//gIYCXGnwMBrMD48yAASCOAStz9cyGACow/HwIoxPhzIgBII4AC3P3zIoArGH9uBHAB48+PACCNAM7g7q+BAE5g/DoI4Ajj10IAkEYAB7j76yGA3xi/Jv4rBKRxAkDa/vnpced9EYCH56fHHScApBEApBEApBEApO3N/n0z4H0hwEjL5jkBII0AIO2/AHgZBBWHW+cEgLRXAXAKILvjjXMCQNqbADgFkNWpbXMCQNrJADgFkM25TXMCQNrZADgFkMWlLV88AYgA0V3bMC+BIO1qAJwCiKpku0UnABEgmtLNFr8EIgJEUbPVqvcARIDZ1W60+k0wEWBWa7a56lMgIsBs1m5y9cegRIBZbNnipt8DEAG8bd3g5l+EEQG8tNhe0/Hyn6YxQsubbtM/heA0QG+tN9ZtsJwGaKnXzbX7HZsQsEXvVxXDXrIQAmqMejk9/DU7IeCS0e8jXd+0EgPMfD88me5TG6LIbbZPCv8BZrCGRa3xKw0AAAAASUVORK5CYII=" />
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFfklEQVR4nO3cPXIbRxRF4QeUqrQHJgqYMqJDbUGxdqJAK1CgnTD2FhSakVIGTrgHRXRgjQ2C+Ome6e7X793zxSxyCrhnGgBZ3Nlkbm7vX7yvAf08Pz3uvK/hkOvFMHaY+UYx/AczelwyOoZhP4zho8aoELr/EIaPLXqH0O2bM3y01CuE5t+U4aOn1iHsW34zxo/eWm+sSU0MHx5anAabTwDGDy8ttrcpAMYPb1s3uDoAxo9ZbNniqgAYP2azdpPVATB+zGrNNqsCYPyYXe1GiwNg/IiiZqtFATB+RFO62asBMH5EVbLdpn8KAURzMQDu/oju2obP/i0F48exvz59uPo1f/z594ArqXfu74bejb4QxFIy+nNfP2sMh05Wwd1fW+3oS8wQw6lTgDfBeKXH+Ht+363eFMHdX9PIgXqeBsenACcAht+dZzoNXgXA3V+P1xi9fu7xxjkBhHnfib1/vtlBANz9tcwwPjOf6zjcOieAoFnGv/C8HgKAtL0ZL3+UzHb3X4y+rmXznACQRgBCZr37LzyujwAgjQBEzH73X4y+zj1vgKHq5vb+hRMA0ghAQJSXP4uR10sAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAAmb4r2w1Rl4vAUCa9D/H/fnjwfsShvn17Yv3JUxpp/Tn0EqDPyVCBKNfrkmcAOrDx3mpTwCG/9bMp4DHm/WUJwDDR6l0nwIx/svef/3ufQkneX1UmyoAxo9aaQJg/OVmOwU8f1GXIgDGX2+WCLx/Sx0+AMa/nncE3uM3Cx4A49/OK4IZxm8WOADG387oCGYZv1nS3wOg3hJBz1+UzTT8RcgTgLt/P71OgxnHb8YJgBMOI9hyIsw6+kPh/haIu7+fkhjef/1udx8/D7iaNjgBUMz7Y9MeQr0H4O4fQ6TnKVQAQGsEAGkEAGlhAoj0uhJxnq8wAQA9EACkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkEQCkhQng7uNn70tAhSjPV5gAgB4IANIIANJCBRDldaW6SM9TqACA1sIFEOnuoija8xMuAKClkAFEu8uoiPi8hAwAaCVsABHvNplFfT7CBmAW90HPJvLzEDoAs9gPfgbRH//wAZjFfxKiyvC4pwjALMeTEUmWxztNAGZ5npTZZXqcUwVgluvJmVG2x3d3c3v/4n0Rvfz88eB9CWlkG/4idQALQlgv6/AXEgEsCKFc9uEvpAI4RhD/Uxn8MekAFi1CUB1QdOk+BfLA+OMigI0Yf2wEAGkEsAF3//gIYCXGnwMBrMD48yAASCOAStz9cyGACow/HwIoxPhzIgBII4AC3P3zIoArGH9uBHAB48+PACCNAM7g7q+BAE5g/DoI4Ajj10IAkEYAB7j76yGA3xi/Jv4rBKRxAkDa/vnpced9EYCH56fHHScApBEApBEApBEApO3N/n0z4H0hwEjL5jkBII0AIO2/AHgZBBWHW+cEgLRXAXAKILvjjXMCQNqbADgFkNWpbXMCQNrJADgFkM25TXMCQNrZADgFkMWlLV88AYgA0V3bMC+BIO1qAJwCiKpku0UnABEgmtLNFr8EIgJEUbPVqvcARIDZ1W60+k0wEWBWa7a56lMgIsBs1m5y9cegRIBZbNnipt8DEAG8bd3g5l+EEQG8tNhe0/Hyn6YxQsubbtM/heA0QG+tN9ZtsJwGaKnXzbX7HZsQsEXvVxXDXrIQAmqMejk9/DU7IeCS0e8jXd+0EgPMfD88me5TG6LIbbZPCv8BZrCGRa3xKw0AAAAASUVORK5CYII=" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+
+/* ---------- storage (localStorage, works offline once installed) ---------- */
+const STORAGE_KEY = "wa-clients";
+const TEMPLATE_KEY = "wa-message-template";
+const DEFAULT_TEMPLATE = "Bonjour {prenom}, je reviens vers vous concernant votre demande. N\'hésitez pas si vous avez des questions !";
+function loadClients() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+function saveClients(next) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+function loadTemplate() {
+  try {
+    return localStorage.getItem(TEMPLATE_KEY) || DEFAULT_TEMPLATE;
+  } catch (e) {
+    return DEFAULT_TEMPLATE;
+  }
+}
+function saveTemplate(text) {
+  try {
+    localStorage.setItem(TEMPLATE_KEY, text);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/* ---------- tiny icon glyphs (no external icon lib needed) ---------- */
+function Icon({ children, size = 14, style }) {
+  return <span style={{ fontSize: size, lineHeight: 1, display: "inline-block", ...style }}>{children}</span>;
+}
+const IconPlus = (p) => <Icon {...p}>＋</Icon>;
+const IconX = (p) => <Icon {...p}>✕</Icon>;
+const IconCheck = (p) => <Icon {...p}>✓</Icon>;
+const IconSearch = (p) => <Icon {...p}>🔍</Icon>;
+const IconTrash = (p) => <Icon {...p}>🗑</Icon>;
+const IconPencil = (p) => <Icon {...p}>✎</Icon>;
+const IconMessage = (p) => <Icon {...p}>💬</Icon>;
+const IconClip = (p) => <Icon {...p}>📋</Icon>;
+const IconExport = (p) => <Icon {...p}>📤</Icon>;
+
+/* ---------- helpers ---------- */
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+function daysBetween(a, b) {
+  const ms = new Date(b).setHours(0, 0, 0, 0) - new Date(a).setHours(0, 0, 0, 0);
+  return Math.round(ms / 86400000);
+}
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+function addDays(dateStr, n) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function normalizeDate(value) {
+  if (!value) return "";
+  if (value instanceof Date && !isNaN(value)) return value.toISOString().slice(0, 10);
+  const parsed = new Date(value);
+  if (!isNaN(parsed)) return parsed.toISOString().slice(0, 10);
+  return "";
+}
+function waLink(phone, text) {
+  let cleaned = (phone || "").replace(/[^\d+]/g, "");
+  if (cleaned.startsWith("+")) cleaned = cleaned.slice(1);
+  else if (cleaned.startsWith("0")) cleaned = "33" + cleaned.slice(1);
+  const base = `https://wa.me/${cleaned}`;
+  return text ? `${base}?text=${encodeURIComponent(text)}` : base;
+}
+function fillTemplate(template, client) {
+  const firstName = (client.name || "").split(" ")[0];
+  return (template || "")
+    .replaceAll("{nom}", client.name || "")
+    .replaceAll("{prenom}", firstName);
+}
+function pulseColor(daysSince) {
+  if (daysSince >= 5) return "#E76F51";
+  if (daysSince >= 2) return "#D4A24C";
+  return "#7FA98C";
+}
+
+const STATUS = {
+  a_relancer: { label: "À relancer", color: "#E76F51" },
+  relance: { label: "Relancé", color: "#D4A24C" },
+  converti: { label: "Converti", color: "#7FA98C" },
+  perdu: { label: "Perdu", color: "#5C6577" },
+};
+const STATUS_ALIASES = {
+  "à relancer": "a_relancer", "a relancer": "a_relancer",
+  "relancé": "relance", "relance": "relance",
+  "converti": "converti", "perdu": "perdu",
+};
+
+function findField(row, aliases) {
+  const keys = Object.keys(row);
+  const key = keys.find((k) => aliases.includes(k.trim().toLowerCase()));
+  return key !== undefined ? row[key] : "";
+}
+function rowToClient(row) {
+  const name = String(findField(row, ["nom", "name", "client", "nom du client"]) || "").trim();
+  const phone = String(findField(row, ["téléphone", "telephone", "phone", "tel", "numéro", "numero", "numéro whatsapp"]) || "").trim();
+  const note = String(findField(row, ["note", "notes", "remarque", "commentaire"]) || "").trim();
+  const rawStatus = String(findField(row, ["statut", "status"]) || "").trim().toLowerCase();
+  const rawDate = findField(row, ["dernier contact", "date", "date de contact", "last contact"]);
+  const lastContact = normalizeDate(rawDate) || todayISO();
+  return {
+    name, phone, note, lastContact,
+    nextFollowup: addDays(lastContact, 3),
+    status: STATUS_ALIASES[rawStatus] || "a_relancer",
+  };
+}
+function parsePastedTable(text) {
+  const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
+  if (lines.length < 2) return [];
+  const delimiter = lines[0].includes("\t") ? "\t" : ",";
+  const headers = lines[0].split(delimiter).map((h) => h.trim());
+  return lines.slice(1).map((line) => {
+    const cells = line.split(delimiter);
+    const row = {};
+    headers.forEach((h, i) => { row[h] = cells[i] !== undefined ? cells[i].trim() : ""; });
+    return row;
+  });
+}
+function exportToTSV(clients) {
+  const header = ["Nom", "Téléphone", "Note", "Statut", "Dernier contact", "Prochaine relance"];
+  const lines = clients.map((c) => [
+    c.name, c.phone || "", (c.note || "").replace(/\t|\n/g, " "),
+    STATUS[c.status]?.label || c.status, c.lastContact || "", c.nextFollowup || "",
+  ].join("\t"));
+  return [header.join("\t"), ...lines].join("\n");
+}
+
+/* ---------- main app ---------- */
+function App() {
+  const [clients, setClients] = useState(() => loadClients());
+  const [filter, setFilter] = useState("actifs");
+  const [query, setQuery] = useState("");
+  const [modal, setModal] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [importMsg, setImportMsg] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
+  const [pasteText, setPasteText] = useState("");
+  const [exportOpen, setExportOpen] = useState(false);
+  const [template, setTemplateState] = useState(() => loadTemplate());
+  const [templateOpen, setTemplateOpen] = useState(false);
+
+  function setTemplate(text) {
+    setTemplateState(text);
+    saveTemplate(text);
+  }
+
+  function persist(next) {
+    setClients(next);
+    saveClients(next);
+  }
+
+  function saveClient(data) {
+    if (data.id) persist(clients.map((c) => (c.id === data.id ? data : c)));
+    else persist([...clients, { ...data, id: uid() }]);
+    setModal(null);
+  }
+
+  function markRelance(client) {
+    const today = todayISO();
+    saveClient({ ...client, lastContact: today, nextFollowup: addDays(today, 3), status: "relance" });
+  }
+
+  function deleteClient(id) {
+    persist(clients.filter((c) => c.id !== id));
+    setConfirmDelete(null);
+  }
+
+  function mergeImportedRows(rows) {
+    const imported = rows.map(rowToClient).filter((c) => c.name);
+    if (imported.length === 0) {
+      setImportMsg("Aucune ligne valide reconnue. Vérifie qu\'une colonne \'Nom\' existe.");
+      return;
+    }
+    const existingPhones = new Set(clients.map((c) => c.phone).filter(Boolean));
+    const existingNames = new Set(clients.map((c) => c.name.toLowerCase()));
+    const fresh = imported.filter((c) => !(c.phone && existingPhones.has(c.phone)) && !existingNames.has(c.name.toLowerCase()));
+    const skipped = imported.length - fresh.length;
+    persist([...clients, ...fresh.map((c) => ({ ...c, id: uid() }))]);
+    setImportMsg(`${fresh.length} client${fresh.length > 1 ? "s" : ""} importé${fresh.length > 1 ? "s" : ""}` +
+      (skipped > 0 ? ` · ${skipped} déjà présent${skipped > 1 ? "s" : ""} ignoré${skipped > 1 ? "s" : ""}` : ""));
+    setPasteText("");
+    setImportOpen(false);
+  }
+
+  function handleImportPaste() {
+    mergeImportedRows(parsePastedTable(pasteText));
+  }
+
+  async function handleImportFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    setImportMsg("Lecture du fichier...");
+    try {
+      const buffer = await file.arrayBuffer();
+      const wb = XLSX.read(buffer, { type: "array", cellDates: true });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+      mergeImportedRows(rows);
+    } catch (err) {
+      setImportMsg("Impossible de lire ce fichier. Vérifie qu\'il s\'agit bien d\'un .xlsx.");
+    }
+    e.target.value = "";
+  }
+
+  const enriched = useMemo(() => {
+    const today = todayISO();
+    return clients
+      .map((c) => ({
+        ...c,
+        daysSince: daysBetween(c.lastContact, today),
+        overdue: c.nextFollowup && c.nextFollowup <= today && c.status !== "converti" && c.status !== "perdu",
+      }))
+      .filter((c) => c.name.toLowerCase().includes(query.toLowerCase()) || (c.phone || "").includes(query))
+      .filter((c) => {
+        if (filter === "tous") return true;
+        if (filter === "actifs") return c.status !== "converti" && c.status !== "perdu";
+        if (filter === "relancer") return c.overdue;
+        if (filter === "termines") return c.status === "converti" || c.status === "perdu";
+        return true;
+      })
+      .sort((a, b) => {
+        if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
+        const an = a.nextFollowup || "9999", bn = b.nextFollowup || "9999";
+        return an < bn ? -1 : an > bn ? 1 : 0;
+      });
+  }, [clients, filter, query]);
+
+  const stats = useMemo(() => {
+    const today = todayISO();
+    return {
+      overdue: clients.filter((c) => c.nextFollowup && c.nextFollowup <= today && c.status !== "converti" && c.status !== "perdu").length,
+      actifs: clients.filter((c) => c.status !== "converti" && c.status !== "perdu").length,
+    };
+  }, [clients]);
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#1A2332", color: "#EEE8DC", fontFamily: "\'Inter\', sans-serif" }}>
+      <header style={{ padding: "28px 20px 18px", borderBottom: "1px solid #2C3A50" }}>
+        <div style={{ fontFamily: "\'Fraunces\', serif", fontWeight: 700, fontSize: 26, letterSpacing: "-0.01em" }}>Suivi WhatsApp</div>
+        <div style={{ marginTop: 6, fontSize: 13.5, color: "#8B95A3" }}>
+          {stats.overdue > 0
+            ? <span style={{ color: "#E76F51", fontWeight: 500 }}>{stats.overdue} client{stats.overdue > 1 ? "s" : ""} à relancer</span>
+            : <span>Aucune relance en retard</span>}
+          <span> · {stats.actifs} en cours</span>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button onClick={() => { setImportMsg(""); setImportOpen(true); }} style={{
+            marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, background: "transparent",
+            border: "1px solid #2C3A50", color: "#8B95A3", borderRadius: 8, padding: "7px 12px", fontSize: 12.5,
+            cursor: "pointer", fontFamily: "\'Inter\', sans-serif",
+          }}>
+            <IconClip size={13} /> Importer depuis Excel
+          </button>
+          <button onClick={() => setExportOpen(true)} disabled={clients.length === 0} style={{
+            marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, background: "transparent",
+            border: "1px solid #2C3A50", color: clients.length === 0 ? "#4A5568" : "#8B95A3", borderRadius: 8, padding: "7px 12px", fontSize: 12.5,
+            cursor: clients.length === 0 ? "not-allowed" : "pointer", fontFamily: "\'Inter\', sans-serif",
+          }}>
+            <IconExport size={13} /> Exporter mes clients
+          </button>
+          <button onClick={() => setTemplateOpen(true)} style={{
+            marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, background: "transparent",
+            border: "1px solid #2C3A50", color: "#8B95A3", borderRadius: 8, padding: "7px 12px", fontSize: 12.5,
+            cursor: "pointer", fontFamily: "\'Inter\', sans-serif",
+          }}>
+            <IconPencil size={13} /> Modèle de message
+          </button>
+        </div>
+        {importMsg && (
+          <div style={{ marginTop: 8, fontSize: 12.5, color: importMsg.startsWith("Impossible") || importMsg.startsWith("Aucune") ? "#E76F51" : "#7FA98C" }}>
+            {importMsg}
+          </div>
+        )}
+      </header>
+
+      <div style={{ padding: "14px 20px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#232D3F", borderRadius: 10, padding: "9px 12px" }}>
+          <IconSearch size={16} style={{ color: "#7C879A" }} />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher un client..."
+            style={{ background: "transparent", border: "none", outline: "none", color: "#EEE8DC", fontSize: 14.5, width: "100%", fontFamily: "\'Inter\', sans-serif" }} />
+        </div>
+
+        <div style={{ display: "flex", gap: 6, marginTop: 12, overflowX: "auto" }}>
+          {[["actifs", "En cours"], ["relancer", "À relancer"], ["tous", "Tous"], ["termines", "Terminés"]].map(([key, label]) => (
+            <button key={key} onClick={() => setFilter(key)} style={{
+              padding: "7px 13px", borderRadius: 20, border: "1px solid " + (filter === key ? "#EEE8DC" : "#2C3A50"),
+              background: filter === key ? "#EEE8DC" : "transparent", color: filter === key ? "#1A2332" : "#8B95A3",
+              fontSize: 13, fontWeight: 500, whiteSpace: "nowrap", cursor: "pointer", fontFamily: "\'Inter\', sans-serif",
+            }}>{label}</button>
+          ))}
+        </div>
+      </div>
+
+      <main style={{ padding: "16px 20px 100px" }}>
+        {enriched.length === 0 && (
+          <div style={{ marginTop: 50, textAlign: "center", color: "#7C879A" }}>
+            <div style={{ fontFamily: "\'Fraunces\', serif", fontSize: 18, color: "#EEE8DC", marginBottom: 6 }}>
+              {filter === "actifs" ? "Aucun client à suivre" : "Rien ici"}
+            </div>
+            <div style={{ fontSize: 13.5 }}>Ajoute un client contacté sur WhatsApp pour commencer.</div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {enriched.map((c) => (
+            <div key={c.id} style={{
+              background: "#232D3F", border: "1px solid " + (c.overdue ? "#E76F5155" : "#2C3A50"), borderRadius: 12, padding: "14px 15px",
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                  <span title={`${c.daysSince}j depuis le dernier contact`} style={{ width: 9, height: 9, borderRadius: "50%", background: pulseColor(c.daysSince), flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontFamily: "\'Fraunces\', serif", fontWeight: 600, fontSize: 16.5 }}>{c.name}</div>
+                    {c.phone && <div style={{ fontFamily: "\'JetBrains Mono\', monospace", fontSize: 12, color: "#7C879A", marginTop: 2 }}>{c.phone}</div>}
+                  </div>
+                </div>
+                <span style={{
+                  fontSize: 11, fontWeight: 500, color: STATUS[c.status]?.color || "#7C879A",
+                  border: "1px solid " + (STATUS[c.status]?.color || "#7C879A") + "55", borderRadius: 20, padding: "3px 9px", whiteSpace: "nowrap",
+                }}>{STATUS[c.status]?.label || c.status}</span>
+              </div>
+
+              {c.note && <div style={{ marginTop: 9, fontSize: 13.5, color: "#C9C2B4", lineHeight: 1.4 }}>{c.note}</div>}
+
+              <div style={{ marginTop: 10, fontSize: 12, color: c.overdue ? "#E76F51" : "#7C879A", fontFamily: "\'JetBrains Mono\', monospace" }}>
+                {c.overdue ? `À relancer depuis le ${c.nextFollowup}` : c.nextFollowup ? `Prochaine relance : ${c.nextFollowup}` : "Pas de relance programmée"}
+              </div>
+
+              <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                {c.phone && (
+                  <a href={waLink(c.phone, fillTemplate(template, c))} target="_blank" rel="noopener noreferrer" style={{
+                    display: "flex", alignItems: "center", gap: 5, background: "#25D366", color: "#0C2119",
+                    border: "none", borderRadius: 8, padding: "7px 11px", fontSize: 12.5, fontWeight: 600, cursor: "pointer", textDecoration: "none",
+                  }}><IconMessage size={13} /> Contacter</a>
+                )}
+                {c.status !== "converti" && c.status !== "perdu" && (
+                  <button onClick={() => markRelance(c)} style={{
+                    display: "flex", alignItems: "center", gap: 5, background: "#7FA98C", color: "#152018",
+                    border: "none", borderRadius: 8, padding: "7px 11px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+                  }}><IconCheck size={13} /> Relancé</button>
+                )}
+                <button onClick={() => setModal({ mode: "edit", client: c })} style={{
+                  display: "flex", alignItems: "center", gap: 5, background: "transparent", color: "#8B95A3",
+                  border: "1px solid #2C3A50", borderRadius: 8, padding: "7px 11px", fontSize: 12.5, cursor: "pointer",
+                }}><IconPencil size={13} /> Modifier</button>
+                {confirmDelete === c.id ? (
+                  <button onClick={() => deleteClient(c.id)} style={{ background: "#E76F51", color: "#fff", border: "none", borderRadius: 8, padding: "7px 11px", fontSize: 12.5, cursor: "pointer" }}>Confirmer ?</button>
+                ) : (
+                  <button onClick={() => setConfirmDelete(c.id)} style={{ background: "transparent", color: "#5C6577", border: "1px solid #2C3A50", borderRadius: 8, padding: "7px 9px", cursor: "pointer" }}><IconTrash size={13} /></button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+
+      <button onClick={() => setModal({ mode: "new", client: null })} style={{
+        position: "fixed", bottom: 24, right: 20, background: "#E76F51", color: "#fff", border: "none", borderRadius: 30,
+        padding: "13px 18px", display: "flex", alignItems: "center", gap: 7, fontSize: 14, fontWeight: 600,
+        boxShadow: "0 6px 18px rgba(231,111,81,0.4)", cursor: "pointer", fontFamily: "\'Inter\', sans-serif",
+      }}><IconPlus size={17} /> Client</button>
+
+      {modal && <ClientForm modal={modal} onClose={() => setModal(null)} onSave={saveClient} />}
+      {importOpen && (
+        <ImportModal pasteText={pasteText} setPasteText={setPasteText} onClose={() => setImportOpen(false)}
+          onImport={handleImportPaste} onFileSelected={handleImportFile} />
+      )}
+      {exportOpen && <ExportModal text={exportToTSV(clients)} onClose={() => setExportOpen(false)} />}
+      {templateOpen && <TemplateModal template={template} setTemplate={setTemplate} onClose={() => setTemplateOpen(false)} />}
+    </div>
+  );
+}
+
+function ClientForm({ modal, onClose, onSave }) {
+  const editing = modal.client;
+  const [name, setName] = useState(editing?.name || "");
+  const [phone, setPhone] = useState(editing?.phone || "");
+  const [note, setNote] = useState(editing?.note || "");
+  const [lastContact, setLastContact] = useState(editing?.lastContact || todayISO());
+  const [nextFollowup, setNextFollowup] = useState(editing?.nextFollowup || addDays(todayISO(), 3));
+  const [status, setStatus] = useState(editing?.status || "a_relancer");
+
+  function handleSave() {
+    if (!name.trim()) return;
+    onSave({ id: editing?.id, name: name.trim(), phone: phone.trim(), note: note.trim(), lastContact, nextFollowup: nextFollowup || null, status });
+  }
+
+  const inputStyle = { width: "100%", background: "#1A2332", border: "1px solid #2C3A50", borderRadius: 8, color: "#EEE8DC", padding: "10px 12px", fontSize: 14, fontFamily: "\'Inter\', sans-serif", outline: "none", boxSizing: "border-box" };
+  const labelStyle = { fontSize: 12, color: "#7C879A", marginBottom: 5, display: "block", fontWeight: 500 };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(10,14,20,0.7)", display: "flex", alignItems: "flex-end", zIndex: 50 }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: "#1F2937", width: "100%", borderRadius: "18px 18px 0 0", padding: "20px 20px 28px", maxHeight: "88vh", overflowY: "auto", fontFamily: "\'Inter\', sans-serif" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+          <div style={{ fontFamily: "\'Fraunces\', serif", fontSize: 19, fontWeight: 600, color: "#EEE8DC" }}>{editing ? "Modifier le client" : "Nouveau client"}</div>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: "#7C879A", cursor: "pointer" }}><IconX size={20} /></button>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div><label style={labelStyle}>Nom du client</label><input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex : Fatima Z." autoFocus /></div>
+          <div><label style={labelStyle}>Téléphone WhatsApp</label><input style={inputStyle} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="06 12 34 56 78" /></div>
+          <div><label style={labelStyle}>Note (dernier échange)</label><textarea style={{ ...inputStyle, minHeight: 60, resize: "vertical" }} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ce qu\'il voulait, contexte utile..." /></div>
+          <div style={{ display: "flex", gap: 12 }}>
+            <div style={{ flex: 1 }}><label style={labelStyle}>Dernier contact</label><input type="date" style={inputStyle} value={lastContact} onChange={(e) => setLastContact(e.target.value)} /></div>
+            <div style={{ flex: 1 }}><label style={labelStyle}>Prochaine relance</label><input type="date" style={inputStyle} value={nextFollowup} onChange={(e) => setNextFollowup(e.target.value)} /></div>
+          </div>
+          <div>
+            <label style={labelStyle}>Statut</label>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {Object.entries(STATUS).map(([key, v]) => (
+                <button key={key} onClick={() => setStatus(key)} style={{
+                  padding: "7px 12px", borderRadius: 20, border: "1px solid " + (status === key ? v.color : "#2C3A50"),
+                  background: status === key ? v.color + "22" : "transparent", color: status === key ? v.color : "#7C879A", fontSize: 12.5, cursor: "pointer",
+                }}>{v.label}</button>
+              ))}
+            </div>
+          </div>
+          <button onClick={handleSave} disabled={!name.trim()} style={{
+            marginTop: 6, background: name.trim() ? "#E76F51" : "#3A4152", color: "#fff", border: "none", borderRadius: 10,
+            padding: "13px", fontSize: 15, fontWeight: 600, cursor: name.trim() ? "pointer" : "not-allowed", fontFamily: "\'Inter\', sans-serif",
+          }}>{editing ? "Enregistrer" : "Ajouter le client"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ImportModal({ pasteText, setPasteText, onClose, onImport, onFileSelected }) {
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(10,14,20,0.7)", display: "flex", alignItems: "flex-end", zIndex: 50 }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: "#1F2937", width: "100%", borderRadius: "18px 18px 0 0", padding: "20px 20px 28px", maxHeight: "88vh", overflowY: "auto", fontFamily: "\'Inter\', sans-serif" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div style={{ fontFamily: "\'Fraunces\', serif", fontSize: 19, fontWeight: 600, color: "#EEE8DC" }}>Importer depuis Excel</div>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: "#7C879A", cursor: "pointer" }}><IconX size={20} /></button>
+        </div>
+
+        <div style={{ fontSize: 12.5, color: "#7C879A", fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.03em" }}>Fichier .xlsx</div>
+        <input id="xlsx-import-input" type="file" accept=".xlsx,.xls" style={{ display: "none" }} onChange={onFileSelected} />
+        <label htmlFor="xlsx-import-input" style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: "#1A2332",
+          border: "1px dashed #3A4763", color: "#8B95A3", borderRadius: 8, padding: "14px 12px", fontSize: 13, cursor: "pointer", fontFamily: "\'Inter\', sans-serif",
+        }}>Choisir un fichier .xlsx</label>
+
+        <div style={{ fontSize: 12.5, color: "#7C879A", fontWeight: 600, margin: "18px 0 8px", textTransform: "uppercase", letterSpacing: "0.03em" }}>Ou copier-coller</div>
+        <div style={{ fontSize: 13, color: "#8B95A3", lineHeight: 1.5, marginBottom: 10 }}>
+          Sélectionne tes colonnes dans Excel avec les en-têtes (<b style={{ color: "#C9C2B4" }}>Nom, Téléphone, Note, Statut</b>), copie, puis colle ici.
+        </div>
+        <textarea value={pasteText} onChange={(e) => setPasteText(e.target.value)}
+          placeholder={"Nom\tTéléphone\tNote\tStatut\nFatima Z.\t0612345678\tVoulait un devis\tÀ relancer"}
+          style={{ width: "100%", minHeight: 140, background: "#1A2332", border: "1px solid #2C3A50", borderRadius: 8, color: "#EEE8DC", padding: "10px 12px", fontSize: 13, fontFamily: "\'JetBrains Mono\', monospace", outline: "none", boxSizing: "border-box", resize: "vertical" }} />
+        <button onClick={onImport} disabled={!pasteText.trim()} style={{
+          marginTop: 14, width: "100%", background: pasteText.trim() ? "#E76F51" : "#3A4152", color: "#fff", border: "none",
+          borderRadius: 10, padding: "13px", fontSize: 15, fontWeight: 600, cursor: pasteText.trim() ? "pointer" : "not-allowed", fontFamily: "\'Inter\', sans-serif",
+        }}>Importer les clients</button>
+      </div>
+    </div>
+  );
+}
+
+function ExportModal({ text, onClose }) {
+  const [copied, setCopied] = useState(false);
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      setCopied(false);
+    }
+  }
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(10,14,20,0.7)", display: "flex", alignItems: "flex-end", zIndex: 50 }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: "#1F2937", width: "100%", borderRadius: "18px 18px 0 0", padding: "20px 20px 28px", maxHeight: "88vh", overflowY: "auto", fontFamily: "\'Inter\', sans-serif" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div style={{ fontFamily: "\'Fraunces\', serif", fontSize: 19, fontWeight: 600, color: "#EEE8DC" }}>Exporter mes clients</div>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: "#7C879A", cursor: "pointer" }}><IconX size={20} /></button>
+        </div>
+        <div style={{ fontSize: 13, color: "#8B95A3", lineHeight: 1.5, marginBottom: 10 }}>
+          Copie ce texte, puis ouvre l\'app sur ton autre téléphone → <b style={{ color: "#C9C2B4" }}>Importer depuis Excel</b> → colle-le dans la zone "copier-coller".
+        </div>
+        <textarea readOnly value={text} onFocus={(e) => e.target.select()}
+          style={{ width: "100%", minHeight: 160, background: "#1A2332", border: "1px solid #2C3A50", borderRadius: 8, color: "#EEE8DC", padding: "10px 12px", fontSize: 12.5, fontFamily: "\'JetBrains Mono\', monospace", outline: "none", boxSizing: "border-box", resize: "vertical" }} />
+        <button onClick={handleCopy} style={{
+          marginTop: 14, width: "100%", background: copied ? "#7FA98C" : "#E76F51", color: copied ? "#152018" : "#fff", border: "none",
+          borderRadius: 10, padding: "13px", fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "\'Inter\', sans-serif",
+        }}>{copied ? "✓ Copié !" : "Copier dans le presse-papiers"}</button>
+      </div>
+    </div>
+  );
+}
+
+function TemplateModal({ template, setTemplate, onClose }) {
+  const [draft, setDraft] = useState(template);
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(10,14,20,0.7)", display: "flex", alignItems: "flex-end", zIndex: 50 }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: "#1F2937", width: "100%", borderRadius: "18px 18px 0 0", padding: "20px 20px 28px", maxHeight: "88vh", overflowY: "auto", fontFamily: "\'Inter\', sans-serif" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div style={{ fontFamily: "\'Fraunces\', serif", fontSize: 19, fontWeight: 600, color: "#EEE8DC" }}>Modèle de message</div>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: "#7C879A", cursor: "pointer" }}><IconX size={20} /></button>
+        </div>
+        <div style={{ fontSize: 13, color: "#8B95A3", lineHeight: 1.5, marginBottom: 10 }}>
+          Ce message sera pré-rempli quand tu appuies sur <b style={{ color: "#C9C2B4" }}>Contacter</b>. Utilise <b style={{ color: "#C9C2B4" }}>{"{prenom}"}</b> ou <b style={{ color: "#C9C2B4" }}>{"{nom}"}</b> pour insérer le nom du client automatiquement. Tu devras toujours appuyer sur Envoyer dans WhatsApp — c\'est WhatsApp qui l\'exige, pas l\'app.
+        </div>
+        <textarea value={draft} onChange={(e) => setDraft(e.target.value)}
+          style={{ width: "100%", minHeight: 120, background: "#1A2332", border: "1px solid #2C3A50", borderRadius: 8, color: "#EEE8DC", padding: "10px 12px", fontSize: 14, fontFamily: "\'Inter\', sans-serif", outline: "none", boxSizing: "border-box", resize: "vertical" }} />
+        <button onClick={() => { setTemplate(draft); onClose(); }} style={{
+          marginTop: 14, width: "100%", background: "#E76F51", color: "#fff", border: "none",
+          borderRadius: 10, padding: "13px", fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "\'Inter\', sans-serif",
+        }}>Enregistrer le modèle</button>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
