@@ -92,9 +92,9 @@ const IconPencil = p => /*#__PURE__*/React.createElement(Icon, p, "✎");
 const IconMessage = p => /*#__PURE__*/React.createElement(Icon, p, "💬");
 const IconClip = p => /*#__PURE__*/React.createElement(Icon, p, "📋");
 function extractPhoneNumbers(text) {
-  const re = /(\+33[\s.-]?[1-9](?:[\s.-]?\d{2}){4})|(0[1-9](?:[\s.-]?\d{2}){4})/g;
+  const re = /(\+\d{1,4}(?:[\s.-]?\d{2,4}){2,5})|(0[1-9](?:[\s.-]?\d{2}){4})/g;
   const matches = text.match(re) || [];
-  const cleaned = matches.map(m => m.replace(/[\s.-]/g, ""));
+  const cleaned = matches.map(m => m.replace(/[\s.-]/g, "")).filter(m => m.replace(/^\+/, "").length >= 8 && m.replace(/^\+/, "").length <= 14);
   return [...new Set(cleaned)];
 }
 const IconExport = p => /*#__PURE__*/React.createElement(Icon, p, "📤");
@@ -259,7 +259,11 @@ function App() {
     }
     const existingPhones = new Set(clients.map(c => c.phone).filter(Boolean));
     const existingNames = new Set(clients.map(c => c.name.toLowerCase()));
-    const fresh = imported.filter(c => !(c.phone && existingPhones.has(c.phone)) && !existingNames.has(c.name.toLowerCase()));
+    const fresh = imported.filter(c => {
+      if (c.phone && existingPhones.has(c.phone)) return false;
+      if (!c.phone && existingNames.has(c.name.toLowerCase())) return false;
+      return true;
+    });
     const skipped = imported.length - fresh.length;
     persist([...clients, ...fresh.map(c => ({
       ...c,
@@ -1436,10 +1440,10 @@ function PhotoImportModal({
         setStatus("error");
         return;
       }
-      setDetected(numbers.map((phone, i) => ({
+      setDetected(numbers.map(phone => ({
         phone,
         checked: true,
-        name: `Contact ${i + 1}`
+        name: `Contact ${phone.slice(-4)}`
       })));
       setStatus("done");
     } catch (err) {
@@ -1458,6 +1462,12 @@ function PhotoImportModal({
     setDetected(detected.map((d, idx) => idx === i ? {
       ...d,
       name
+    } : d));
+  }
+  function updatePhone(i, phone) {
+    setDetected(detected.map((d, idx) => idx === i ? {
+      ...d,
+      phone
     } : d));
   }
   function handleAdd() {
@@ -1632,21 +1642,34 @@ function PhotoImportModal({
     style: {
       flexShrink: 0
     }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 4,
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    style: inputStyle,
+    value: d.name,
+    onChange: e => updateName(i, e.target.value),
+    placeholder: "Nom"
   }), /*#__PURE__*/React.createElement("input", {
     style: {
       ...inputStyle,
-      flex: 1
+      fontFamily: "\'JetBrains Mono\', monospace"
     },
-    value: d.name,
-    onChange: e => updateName(i, e.target.value)
-  }), /*#__PURE__*/React.createElement("span", {
+    value: d.phone,
+    onChange: e => updatePhone(i, e.target.value),
+    placeholder: "Numéro"
+  }))))), /*#__PURE__*/React.createElement("div", {
     style: {
-      fontFamily: "\'JetBrains Mono\', monospace",
       fontSize: 12,
       color: "#7C879A",
-      whiteSpace: "nowrap"
+      marginBottom: 12,
+      lineHeight: 1.4
     }
-  }, d.phone)))), /*#__PURE__*/React.createElement("button", {
+  }, "Vérifie chaque numéro avant d'enregistrer — la reconnaissance peut confondre certains chiffres (0/8, 1/7...). Tu peux corriger directement ici."), /*#__PURE__*/React.createElement("button", {
     onClick: handleAdd,
     disabled: !detected.some(d => d.checked),
     style: {
